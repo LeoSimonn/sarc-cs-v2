@@ -1,0 +1,9 @@
+com/example/studentsubjectapi/repository/StudentRepository.class
+com/example/studentsubjectapi/repository/SubjectRepository.class
+com/example/studentsubjectapi/model/Subject.class
+com/example/studentsubjectapi/controller/SubjectController.class
+com/example/studentsubjectapi/StudentSubjectApiApplication.class
+com/example/studentsubjectapi/service/SubjectService.class
+com/example/studentsubjectapi/model/Student.class
+com/example/studentsubjectapi/service/StudentService.class
+com/example/studentsubjectapi/controller/StudentController.class

@@ -23,10 +23,11 @@ public class StudentService {
     }
 
     public Optional<Student> getStudentByRegistrationNumber(String registrationNumber) {
-        return studentRepository.findByRegistrationNumber(registrationNumber);
+        Student student = studentRepository.findByRegistrationNumber(registrationNumber);
+        return Optional.ofNullable(student);
     }
 
     public List<Student> getStudentsByName(String name) {
-        return studentRepository.findByName(name);
+        return studentRepository.findByNameContaining(name);
     }
 }

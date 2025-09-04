@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/students")
@@ -23,8 +24,9 @@ public class StudentController {
 
     @GetMapping("/{registrationNumber}")
     public ResponseEntity<Student> getStudentByRegistrationNumber(@PathVariable String registrationNumber) {
-        Student student = studentService.getStudentByRegistrationNumber(registrationNumber);
-        return ResponseEntity.ok(student);
+        Optional<Student> student = studentService.getStudentByRegistrationNumber(registrationNumber);
+        return student.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/search")

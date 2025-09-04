@@ -25,6 +25,10 @@ public class SubjectService {
         return subjectRepository.findAll();
     }
 
+    public Subject getSubjectByCode(String subjectCode) {
+        return subjectRepository.findBySubjectCode(subjectCode);
+    }
+
     public void enrollStudentInSubject(Long studentId, Long subjectId) {
         // Logic to enroll a student in a subject
     }
