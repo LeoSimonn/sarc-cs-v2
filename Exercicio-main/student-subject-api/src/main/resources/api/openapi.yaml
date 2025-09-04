@@ -1,0 +1,117 @@
+openapi: 3.0.0
+info:
+  title: Student Subject API
+  description: API for managing students and subjects
+  version: 1.0.0
+paths:
+  /students:
+    post:
+      summary: Register a new student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                registrationNumber:
+                  type: string
+      responses:
+        '201':
+          description: Student registered successfully
+        '400':
+          description: Invalid input
+
+    get:
+      summary: Query students
+      parameters:
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: registrationNumber
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of students
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    registrationNumber:
+                      type: string
+
+  /subjects:
+    post:
+      summary: Register a new subject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subjectCode:
+                  type: string
+                subjectName:
+                  type: string
+                schedule:
+                  type: string
+      responses:
+        '201':
+          description: Subject registered successfully
+        '400':
+          description: Invalid input
+
+  /subjects/enroll:
+    post:
+      summary: Enroll a student in a subject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                registrationNumber:
+                  type: string
+                subjectCode:
+                  type: string
+      responses:
+        '200':
+          description: Student enrolled in subject successfully
+        '404':
+          description: Student or subject not found
+        '400':
+          description: Invalid input
+
+components:
+  schemas:
+    Student:
+      type: object
+      properties:
+        name:
+          type: string
+        registrationNumber:
+          type: string
+
+    Subject:
+      type: object
+      properties:
+        subjectCode:
+          type: string
+        subjectName:
+          type: string
+        schedule:
+          type: string
