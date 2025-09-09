@@ -1,0 +1,9 @@
+/home/raidercol/dev/ES/ES8/Construcao/sarc-cs-v2/src/main/java/com/example/studentsubjectapi/model/Subject.java
+/home/raidercol/dev/ES/ES8/Construcao/sarc-cs-v2/src/main/java/com/example/studentsubjectapi/StudentSubjectApiApplication.java
+/home/raidercol/dev/ES/ES8/Construcao/sarc-cs-v2/src/main/java/com/example/studentsubjectapi/service/SubjectService.java
+/home/raidercol/dev/ES/ES8/Construcao/sarc-cs-v2/src/main/java/com/example/studentsubjectapi/controller/StudentController.java
+/home/raidercol/dev/ES/ES8/Construcao/sarc-cs-v2/src/main/java/com/example/studentsubjectapi/controller/SubjectController.java
+/home/raidercol/dev/ES/ES8/Construcao/sarc-cs-v2/src/main/java/com/example/studentsubjectapi/repository/SubjectRepository.java
+/home/raidercol/dev/ES/ES8/Construcao/sarc-cs-v2/src/main/java/com/example/studentsubjectapi/model/Student.java
+/home/raidercol/dev/ES/ES8/Construcao/sarc-cs-v2/src/main/java/com/example/studentsubjectapi/repository/StudentRepository.java
+/home/raidercol/dev/ES/ES8/Construcao/sarc-cs-v2/src/main/java/com/example/studentsubjectapi/service/StudentService.java
