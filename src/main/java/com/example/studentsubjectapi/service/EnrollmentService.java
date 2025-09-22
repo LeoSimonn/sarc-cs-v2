@@ -30,25 +30,23 @@ public class EnrollmentService {
         this.subjectRepository = subjectRepository;
     }
 
-    public Enrollment enrollStudentInSubject(String studentRegistrationNumber, String subjectCode) {
-        // Buscar estudante por matrícula
+    public Enrollment enrollStudentInSubject(String studentRegistrationNumber, String subjectCode, String schedule) {
+        // buscar estudante por matricula
         Student student = studentRepository.findByRegistrationNumber(studentRegistrationNumber);
         if (student == null) {
-            throw new IllegalArgumentException("Estudante não encontrado com matrícula: " + studentRegistrationNumber);
+            throw new IllegalArgumentException("Estudante nao encontrado com matricula: " + studentRegistrationNumber);
         }
 
-        // Buscar disciplina por código
-        Subject subject = subjectRepository.findBySubjectCode(subjectCode);
-        if (subject == null) {
-            throw new IllegalArgumentException("Disciplina não encontrada com código: " + subjectCode);
-        }
+        // buscar disciplina pelo codigo e horario
+        Subject subject = subjectRepository.findBySubjectCodeAndSchedule(subjectCode, schedule)
+                .orElseThrow(() -> new IllegalArgumentException("Disciplina nao encontrada com codigo: " + subjectCode + " e horario: " + schedule));
 
-        // Verificar se já existe matrícula
+        // verificar se ja existe matricula
         if (enrollmentRepository.existsByStudentAndSubject(student, subject)) {
-            throw new IllegalStateException("Estudante já está matriculado nesta disciplina");
+            throw new IllegalStateException("Estudante ja esta matriculado nesta disciplina e horario");
         }
 
-        // Criar nova matrícula
+        // criar nova matricula
         Enrollment enrollment = new Enrollment(student, subject);
         return enrollmentRepository.save(enrollment);
     }
@@ -56,7 +54,7 @@ public class EnrollmentService {
     public List<Enrollment> getEnrollmentsByStudent(String studentRegistrationNumber) {
         Student student = studentRepository.findByRegistrationNumber(studentRegistrationNumber);
         if (student == null) {
-            throw new IllegalArgumentException("Estudante não encontrado com matrícula: " + studentRegistrationNumber);
+            throw new IllegalArgumentException("Estudante nao encontrado com matricula: " + studentRegistrationNumber);
         }
         return enrollmentRepository.findByStudent(student);
     }
@@ -64,7 +62,7 @@ public class EnrollmentService {
     public List<Enrollment> getEnrollmentsBySubject(String subjectCode) {
         Subject subject = subjectRepository.findBySubjectCode(subjectCode);
         if (subject == null) {
-            throw new IllegalArgumentException("Disciplina não encontrada com código: " + subjectCode);
+            throw new IllegalArgumentException("Disciplina nao encontrada com codigo: " + subjectCode);
         }
         return enrollmentRepository.findBySubject(subject);
     }
@@ -73,22 +71,20 @@ public class EnrollmentService {
         return enrollmentRepository.findAll();
     }
 
-    public void unenrollStudentFromSubject(String studentRegistrationNumber, String subjectCode) {
+    public void unenrollStudentFromSubject(String studentRegistrationNumber, String subjectCode, String schedule) {
         Student student = studentRepository.findByRegistrationNumber(studentRegistrationNumber);
         if (student == null) {
-            throw new IllegalArgumentException("Estudante não encontrado com matrícula: " + studentRegistrationNumber);
+            throw new IllegalArgumentException("Estudante nao encontrado com matricula: " + studentRegistrationNumber);
         }
 
-        Subject subject = subjectRepository.findBySubjectCode(subjectCode);
-        if (subject == null) {
-            throw new IllegalArgumentException("Disciplina não encontrada com código: " + subjectCode);
-        }
+        Subject subject = subjectRepository.findBySubjectCodeAndSchedule(subjectCode, schedule)
+                .orElseThrow(() -> new IllegalArgumentException("Disciplina nao encontrada com codigo: " + subjectCode + " e horario: " + schedule));
 
         Optional<Enrollment> enrollment = enrollmentRepository.findByStudentAndSubject(student, subject);
         if (enrollment.isPresent()) {
             enrollmentRepository.delete(enrollment.get());
         } else {
-            throw new IllegalStateException("Estudante não está matriculado nesta disciplina");
+            throw new IllegalStateException("Estudante nao esta matriculado nesta disciplina e horario");
         }
     }
 }

@@ -25,11 +25,11 @@ class EnrollmentRepositoryTest {
     @Autowired
     private EnrollmentRepository enrollmentRepository;
 
-    @Autowired
-    private StudentRepository studentRepository;
+    // @Autowired
+    // private StudentRepository studentRepository;
 
-    @Autowired
-    private SubjectRepository subjectRepository;
+    // @Autowired
+    // private SubjectRepository subjectRepository;
 
     private Student student1;
     private Student student2;

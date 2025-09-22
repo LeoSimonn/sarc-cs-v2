@@ -17,9 +17,10 @@ public class EnrollmentController {
 
     @PostMapping
     public ResponseEntity<Enrollment> enrollStudent(@RequestParam String studentRegistrationNumber,
-                                                   @RequestParam String subjectCode) {
+                                                   @RequestParam String subjectCode,
+                                                   @RequestParam String schedule) { // adicionado schedule
         try {
-            Enrollment enrollment = enrollmentService.enrollStudentInSubject(studentRegistrationNumber, subjectCode);
+            Enrollment enrollment = enrollmentService.enrollStudentInSubject(studentRegistrationNumber, subjectCode, schedule);
             return ResponseEntity.ok(enrollment);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
@@ -56,9 +57,10 @@ public class EnrollmentController {
 
     @DeleteMapping
     public ResponseEntity<Void> unenrollStudent(@RequestParam String studentRegistrationNumber,
-                                               @RequestParam String subjectCode) {
+                                               @RequestParam String subjectCode,
+                                               @RequestParam String schedule) { // adicionado schedule
         try {
-            enrollmentService.unenrollStudentFromSubject(studentRegistrationNumber, subjectCode);
+            enrollmentService.unenrollStudentFromSubject(studentRegistrationNumber, subjectCode, schedule);
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();

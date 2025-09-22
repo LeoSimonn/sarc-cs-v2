@@ -1,12 +1,10 @@
 package com.example.studentsubjectapi.integration;
 
-import com.example.studentsubjectapi.model.Enrollment;
 import com.example.studentsubjectapi.model.Student;
 import com.example.studentsubjectapi.model.Subject;
 import com.example.studentsubjectapi.repository.EnrollmentRepository;
 import com.example.studentsubjectapi.repository.StudentRepository;
 import com.example.studentsubjectapi.repository.SubjectRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +38,8 @@ class EnrollmentIntegrationTest {
     @Autowired
     private EnrollmentRepository enrollmentRepository;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+//     @Autowired
+//     private ObjectMapper objectMapper;
 
     private MockMvc mockMvc;
 

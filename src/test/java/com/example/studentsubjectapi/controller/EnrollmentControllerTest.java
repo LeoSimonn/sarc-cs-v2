@@ -4,7 +4,7 @@ import com.example.studentsubjectapi.model.Enrollment;
 import com.example.studentsubjectapi.model.Student;
 import com.example.studentsubjectapi.model.Subject;
 import com.example.studentsubjectapi.service.EnrollmentService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+// import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -31,8 +30,8 @@ class EnrollmentControllerTest {
     @MockBean
     private EnrollmentService enrollmentService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+//     @Autowired
+//     private ObjectMapper objectMapper;
 
     private Student student1;
     private Subject subject1;
@@ -52,13 +51,14 @@ class EnrollmentControllerTest {
 
     @Test
     void enrollStudent_WithValidData_ShouldReturnEnrollment() throws Exception {
-        // Given
-        when(enrollmentService.enrollStudentInSubject("2023001", "MAT001")).thenReturn(enrollment1);
+        // given
+        when(enrollmentService.enrollStudentInSubject("2023001", "MAT001", "A")).thenReturn(enrollment1);
 
-        // When & Then
+        // when & then
         mockMvc.perform(post("/enrollments")
                 .param("studentRegistrationNumber", "2023001")
-                .param("subjectCode", "MAT001"))
+                .param("subjectCode", "MAT001")
+                .param("schedule", "A"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(1))
@@ -68,37 +68,39 @@ class EnrollmentControllerTest {
 
     @Test
     void enrollStudent_WhenStudentNotFound_ShouldReturnBadRequest() throws Exception {
-        // Given
-        when(enrollmentService.enrollStudentInSubject("9999999", "MAT001"))
+        // given
+        when(enrollmentService.enrollStudentInSubject("9999999", "MAT001", "A"))
                 .thenThrow(new IllegalArgumentException("Estudante não encontrado"));
 
-        // When & Then
+        // when & then
         mockMvc.perform(post("/enrollments")
                 .param("studentRegistrationNumber", "9999999")
-                .param("subjectCode", "MAT001"))
+                .param("subjectCode", "MAT001")
+                .param("schedule", "A"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void enrollStudent_WhenAlreadyEnrolled_ShouldReturnConflict() throws Exception {
-        // Given
-        when(enrollmentService.enrollStudentInSubject("2023001", "MAT001"))
+        // given
+        when(enrollmentService.enrollStudentInSubject("2023001", "MAT001", "A"))
                 .thenThrow(new IllegalStateException("Estudante já está matriculado"));
 
-        // When & Then
+        // when & then
         mockMvc.perform(post("/enrollments")
                 .param("studentRegistrationNumber", "2023001")
-                .param("subjectCode", "MAT001"))
+                .param("subjectCode", "MAT001")
+                .param("schedule", "A"))
                 .andExpect(status().isConflict());
     }
 
     @Test
     void getEnrollmentsByStudent_WithValidStudent_ShouldReturnEnrollments() throws Exception {
-        // Given
+        // given
         List<Enrollment> enrollments = Arrays.asList(enrollment1);
         when(enrollmentService.getEnrollmentsByStudent("2023001")).thenReturn(enrollments);
 
-        // When & Then
+        // when & then
         mockMvc.perform(get("/enrollments/student/2023001"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -109,22 +111,22 @@ class EnrollmentControllerTest {
 
     @Test
     void getEnrollmentsByStudent_WhenStudentNotFound_ShouldReturnNotFound() throws Exception {
-        // Given
+        // given
         when(enrollmentService.getEnrollmentsByStudent("9999999"))
                 .thenThrow(new IllegalArgumentException("Estudante não encontrado"));
 
-        // When & Then
+        // when & then
         mockMvc.perform(get("/enrollments/student/9999999"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void getEnrollmentsBySubject_WithValidSubject_ShouldReturnEnrollments() throws Exception {
-        // Given
+        // given
         List<Enrollment> enrollments = Arrays.asList(enrollment1);
         when(enrollmentService.getEnrollmentsBySubject("MAT001")).thenReturn(enrollments);
 
-        // When & Then
+        // when & then
         mockMvc.perform(get("/enrollments/subject/MAT001"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -135,22 +137,22 @@ class EnrollmentControllerTest {
 
     @Test
     void getEnrollmentsBySubject_WhenSubjectNotFound_ShouldReturnNotFound() throws Exception {
-        // Given
+        // given
         when(enrollmentService.getEnrollmentsBySubject("INV001"))
                 .thenThrow(new IllegalArgumentException("Disciplina não encontrada"));
 
-        // When & Then
+        // when & then
         mockMvc.perform(get("/enrollments/subject/INV001"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void getAllEnrollments_ShouldReturnAllEnrollments() throws Exception {
-        // Given
+        // given
         List<Enrollment> enrollments = Arrays.asList(enrollment1);
         when(enrollmentService.getAllEnrollments()).thenReturn(enrollments);
 
-        // When & Then
+        // when & then
         mockMvc.perform(get("/enrollments"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -160,39 +162,39 @@ class EnrollmentControllerTest {
 
     @Test
     void unenrollStudent_WithValidData_ShouldReturnOk() throws Exception {
-        // Given
-        // No exception thrown means success - mock the service to not throw any exception
-
-        // When & Then
+        // when & then
         mockMvc.perform(delete("/enrollments")
                 .param("studentRegistrationNumber", "2023001")
-                .param("subjectCode", "MAT001"))
+                .param("subjectCode", "MAT001")
+                .param("schedule", "A"))
                 .andExpect(status().isOk());
     }
 
     @Test
     void unenrollStudent_WhenStudentNotFound_ShouldReturnNotFound() throws Exception {
-        // Given
+        // given
         doThrow(new IllegalArgumentException("Estudante não encontrado"))
-                .when(enrollmentService).unenrollStudentFromSubject("9999999", "MAT001");
+                .when(enrollmentService).unenrollStudentFromSubject("9999999", "MAT001", "A");
 
-        // When & Then
+        // when & then
         mockMvc.perform(delete("/enrollments")
                 .param("studentRegistrationNumber", "9999999")
-                .param("subjectCode", "MAT001"))
+                .param("subjectCode", "MAT001")
+                .param("schedule", "A"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void unenrollStudent_WhenNotEnrolled_ShouldReturnBadRequest() throws Exception {
-        // Given
+        // given
         doThrow(new IllegalStateException("Estudante não está matriculado"))
-                .when(enrollmentService).unenrollStudentFromSubject("2023001", "MAT001");
+                .when(enrollmentService).unenrollStudentFromSubject("2023001", "MAT001", "A");
 
-        // When & Then
+        // when & then
         mockMvc.perform(delete("/enrollments")
                 .param("studentRegistrationNumber", "2023001")
-                .param("subjectCode", "MAT001"))
+                .param("subjectCode", "MAT001")
+                .param("schedule", "A"))
                 .andExpect(status().isBadRequest());
     }
 }

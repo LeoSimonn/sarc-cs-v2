@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -38,20 +37,20 @@ class SubjectControllerTest {
 
     @BeforeEach
     void setUp() {
-        subject1 = new Subject("MAT001", "Matemática Básica", "A");
+        subject1 = new Subject("MAT001", "Matematica Basica", "A");
         subject1.setId(1L);
         
-        subject2 = new Subject("FIS001", "Física I", "B");
+        subject2 = new Subject("FIS001", "Fisica I", "B");
         subject2.setId(2L);
         
-        subject3 = new Subject("MAT001", "Matemática Básica", "C");
+        subject3 = new Subject("MAT001", "Matematica Basica", "C");
         subject3.setId(3L);
     }
 
     @Test
     void registerSubject_WithValidSubject_ShouldReturnCreatedSubject() throws Exception {
         // Given
-        Subject newSubject = new Subject("QUI001", "Química I", "D");
+        Subject newSubject = new Subject("QUI001", "Quimica I", "D");
         when(subjectService.addSubject(any(Subject.class))).thenReturn(newSubject);
 
         // When & Then
@@ -61,7 +60,7 @@ class SubjectControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.subjectCode").value("QUI001"))
-                .andExpect(jsonPath("$.subjectName").value("Química I"))
+                .andExpect(jsonPath("$.subjectName").value("Quimica I"))
                 .andExpect(jsonPath("$.schedule").value("D"));
     }
 
@@ -88,7 +87,7 @@ class SubjectControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.subjectCode").value("MAT001"))
-                .andExpect(jsonPath("$.subjectName").value("Matemática Básica"))
+                .andExpect(jsonPath("$.subjectName").value("Matematica Basica"))
                 .andExpect(jsonPath("$.schedule").value("A"));
     }
 

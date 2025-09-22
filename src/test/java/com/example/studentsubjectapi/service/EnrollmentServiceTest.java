@@ -19,7 +19,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -55,16 +54,16 @@ class EnrollmentServiceTest {
 
     @Test
     void enrollStudentInSubject_WithValidData_ShouldReturnEnrollment() {
-        // Given
+        // given
         when(studentRepository.findByRegistrationNumber("2023001")).thenReturn(student1);
-        when(subjectRepository.findBySubjectCode("MAT001")).thenReturn(subject1);
+        when(subjectRepository.findBySubjectCodeAndSchedule("MAT001", "A")).thenReturn(Optional.of(subject1));
         when(enrollmentRepository.existsByStudentAndSubject(student1, subject1)).thenReturn(false);
         when(enrollmentRepository.save(any(Enrollment.class))).thenReturn(enrollment1);
 
-        // When
-        Enrollment result = enrollmentService.enrollStudentInSubject("2023001", "MAT001");
+        // when
+        Enrollment result = enrollmentService.enrollStudentInSubject("2023001", "MAT001", "A");
 
-        // Then
+        // then
         assertThat(result).isNotNull();
         assertThat(result.getStudent()).isEqualTo(student1);
         assertThat(result.getSubject()).isEqualTo(subject1);
@@ -73,50 +72,50 @@ class EnrollmentServiceTest {
 
     @Test
     void enrollStudentInSubject_WhenStudentNotFound_ShouldThrowException() {
-        // Given
+        // given
         when(studentRepository.findByRegistrationNumber("9999999")).thenReturn(null);
 
-        // When & Then
-        assertThatThrownBy(() -> enrollmentService.enrollStudentInSubject("9999999", "MAT001"))
+        // when & then
+        assertThatThrownBy(() -> enrollmentService.enrollStudentInSubject("9999999", "MAT001", "A"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Estudante não encontrado com matrícula: 9999999");
+                .hasMessage("Estudante nao encontrado com matricula: 9999999");
     }
 
     @Test
     void enrollStudentInSubject_WhenSubjectNotFound_ShouldThrowException() {
-        // Given
+        // given
         when(studentRepository.findByRegistrationNumber("2023001")).thenReturn(student1);
-        when(subjectRepository.findBySubjectCode("INV001")).thenReturn(null);
+        when(subjectRepository.findBySubjectCodeAndSchedule("INV001", "A")).thenReturn(Optional.empty());
 
-        // When & Then
-        assertThatThrownBy(() -> enrollmentService.enrollStudentInSubject("2023001", "INV001"))
+        // when & then
+        assertThatThrownBy(() -> enrollmentService.enrollStudentInSubject("2023001", "INV001", "A"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Disciplina não encontrada com código: INV001");
+                .hasMessage("Disciplina nao encontrada com codigo: INV001 e horario: A");
     }
 
     @Test
     void enrollStudentInSubject_WhenAlreadyEnrolled_ShouldThrowException() {
-        // Given
+        // given
         when(studentRepository.findByRegistrationNumber("2023001")).thenReturn(student1);
-        when(subjectRepository.findBySubjectCode("MAT001")).thenReturn(subject1);
+        when(subjectRepository.findBySubjectCodeAndSchedule("MAT001", "A")).thenReturn(Optional.of(subject1));
         when(enrollmentRepository.existsByStudentAndSubject(student1, subject1)).thenReturn(true);
 
-        // When & Then
-        assertThatThrownBy(() -> enrollmentService.enrollStudentInSubject("2023001", "MAT001"))
+        // when & then
+        assertThatThrownBy(() -> enrollmentService.enrollStudentInSubject("2023001", "MAT001", "A"))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Estudante já está matriculado nesta disciplina");
+                .hasMessage("Estudante ja esta matriculado nesta disciplina e horario");
     }
 
     @Test
     void getEnrollmentsByStudent_WithValidStudent_ShouldReturnEnrollments() {
-        // Given
+        // given
         when(studentRepository.findByRegistrationNumber("2023001")).thenReturn(student1);
         when(enrollmentRepository.findByStudent(student1)).thenReturn(Arrays.asList(enrollment1));
 
-        // When
+        // when
         List<Enrollment> result = enrollmentService.getEnrollmentsByStudent("2023001");
 
-        // Then
+        // then
         assertThat(result).hasSize(1);
         assertThat(result.get(0)).isEqualTo(enrollment1);
         verify(enrollmentRepository, times(1)).findByStudent(student1);
@@ -124,25 +123,25 @@ class EnrollmentServiceTest {
 
     @Test
     void getEnrollmentsByStudent_WhenStudentNotFound_ShouldThrowException() {
-        // Given
+        // given
         when(studentRepository.findByRegistrationNumber("9999999")).thenReturn(null);
 
-        // When & Then
+        // when & then
         assertThatThrownBy(() -> enrollmentService.getEnrollmentsByStudent("9999999"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Estudante não encontrado com matrícula: 9999999");
+                .hasMessage("Estudante nao encontrado com matricula: 9999999");
     }
 
     @Test
     void getEnrollmentsBySubject_WithValidSubject_ShouldReturnEnrollments() {
-        // Given
+        // given
         when(subjectRepository.findBySubjectCode("MAT001")).thenReturn(subject1);
         when(enrollmentRepository.findBySubject(subject1)).thenReturn(Arrays.asList(enrollment1));
 
-        // When
+        // when
         List<Enrollment> result = enrollmentService.getEnrollmentsBySubject("MAT001");
 
-        // Then
+        // then
         assertThat(result).hasSize(1);
         assertThat(result.get(0)).isEqualTo(enrollment1);
         verify(enrollmentRepository, times(1)).findBySubject(subject1);
@@ -150,25 +149,25 @@ class EnrollmentServiceTest {
 
     @Test
     void getEnrollmentsBySubject_WhenSubjectNotFound_ShouldThrowException() {
-        // Given
+        // given
         when(subjectRepository.findBySubjectCode("INV001")).thenReturn(null);
 
-        // When & Then
+        // when & then
         assertThatThrownBy(() -> enrollmentService.getEnrollmentsBySubject("INV001"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Disciplina não encontrada com código: INV001");
+                .hasMessage("Disciplina nao encontrada com codigo: INV001");
     }
 
     @Test
     void getAllEnrollments_ShouldReturnAllEnrollments() {
-        // Given
+        // given
         List<Enrollment> enrollments = Arrays.asList(enrollment1);
         when(enrollmentRepository.findAll()).thenReturn(enrollments);
 
-        // When
+        // when
         List<Enrollment> result = enrollmentService.getAllEnrollments();
 
-        // Then
+        // then
         assertThat(result).hasSize(1);
         assertThat(result).containsExactly(enrollment1);
         verify(enrollmentRepository, times(1)).findAll();
@@ -176,39 +175,39 @@ class EnrollmentServiceTest {
 
     @Test
     void unenrollStudentFromSubject_WithValidData_ShouldDeleteEnrollment() {
-        // Given
+        // given
         when(studentRepository.findByRegistrationNumber("2023001")).thenReturn(student1);
-        when(subjectRepository.findBySubjectCode("MAT001")).thenReturn(subject1);
+        when(subjectRepository.findBySubjectCodeAndSchedule("MAT001", "A")).thenReturn(Optional.of(subject1));
         when(enrollmentRepository.findByStudentAndSubject(student1, subject1)).thenReturn(Optional.of(enrollment1));
 
-        // When
-        enrollmentService.unenrollStudentFromSubject("2023001", "MAT001");
+        // when
+        enrollmentService.unenrollStudentFromSubject("2023001", "MAT001", "A");
 
-        // Then
+        // then
         verify(enrollmentRepository, times(1)).delete(enrollment1);
     }
 
     @Test
     void unenrollStudentFromSubject_WhenStudentNotFound_ShouldThrowException() {
-        // Given
+        // given
         when(studentRepository.findByRegistrationNumber("9999999")).thenReturn(null);
 
-        // When & Then
-        assertThatThrownBy(() -> enrollmentService.unenrollStudentFromSubject("9999999", "MAT001"))
+        // when & then
+        assertThatThrownBy(() -> enrollmentService.unenrollStudentFromSubject("9999999", "MAT001", "A"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Estudante não encontrado com matrícula: 9999999");
+                .hasMessage("Estudante nao encontrado com matricula: 9999999");
     }
 
     @Test
     void unenrollStudentFromSubject_WhenNotEnrolled_ShouldThrowException() {
-        // Given
+        // given
         when(studentRepository.findByRegistrationNumber("2023001")).thenReturn(student1);
-        when(subjectRepository.findBySubjectCode("MAT001")).thenReturn(subject1);
+        when(subjectRepository.findBySubjectCodeAndSchedule("MAT001", "A")).thenReturn(Optional.of(subject1));
         when(enrollmentRepository.findByStudentAndSubject(student1, subject1)).thenReturn(Optional.empty());
 
-        // When & Then
-        assertThatThrownBy(() -> enrollmentService.unenrollStudentFromSubject("2023001", "MAT001"))
+        // when & then
+        assertThatThrownBy(() -> enrollmentService.unenrollStudentFromSubject("2023001", "MAT001", "A"))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Estudante não está matriculado nesta disciplina");
+                .hasMessage("Estudante nao esta matriculado nesta disciplina e horario");
     }
 }
