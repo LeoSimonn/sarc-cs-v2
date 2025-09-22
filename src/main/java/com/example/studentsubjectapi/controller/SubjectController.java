@@ -38,10 +38,10 @@ public class SubjectController {
         }
     }
 
-    @PostMapping("/{subjectCode}/enroll")
-    public ResponseEntity<String> enrollStudentInSubject(@PathVariable String subjectCode, @RequestParam String studentRegistrationNumber) {
-        subjectService.enrollStudentInSubject(null, null); // Placeholder - implementar lógica de matrícula
-        return ResponseEntity.ok("Student enrolled successfully");
+    @GetMapping("/search")
+    public ResponseEntity<List<Subject>> getSubjectsByName(@RequestParam String name) {
+        List<Subject> subjects = subjectService.getSubjectsByName(name);
+        return ResponseEntity.ok(subjects);
     }
 
     @GetMapping
