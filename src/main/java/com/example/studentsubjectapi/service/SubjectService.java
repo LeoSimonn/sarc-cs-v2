@@ -29,7 +29,7 @@ public class SubjectService {
         return subjectRepository.findBySubjectCode(subjectCode);
     }
 
-    public void enrollStudentInSubject(Long studentId, Long subjectId) {
-        // Logic to enroll a student in a subject
+    public List<Subject> getSubjectsByName(String subjectName) {
+        return subjectRepository.findBySubjectNameContaining(subjectName);
     }
 }
